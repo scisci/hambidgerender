@@ -62,7 +62,29 @@ func (m *GraphicsContextRect) Equals(other GraphicsContextCall) bool {
 	return false
 }
 
+type GraphicsContextFill struct {
+	fill string
+}
+
+func (m *GraphicsContextFill) Name() string {
+	return "Fill"
+}
+
+func (m *GraphicsContextFill) String() string {
+	return "Fill{" +
+		m.fill + "}"
+}
+
+func (m *GraphicsContextFill) Equals(other GraphicsContextCall) bool {
+	if r, ok := other.(*GraphicsContextFill); ok {
+		return r.fill == m.fill
+	}
+
+	return false
+}
+
 type GraphicsContext interface {
+	Fill(fill string)
 	Line(x1, y1, x2, y2 float64)
 	Rect(x, y, w, h float64)
 }
@@ -81,6 +103,10 @@ func (gc *GraphicsContextRecorder) Line(x1, y1, x2, y2 float64) {
 
 func (gc *GraphicsContextRecorder) Rect(x, y, width, height float64) {
 	gc.AddCall(&GraphicsContextRect{x, y, width, height})
+}
+
+func (gc *GraphicsContextRecorder) Fill(fill string) {
+	gc.AddCall(&GraphicsContextFill{fill})
 }
 
 func (gc *GraphicsContextRecorder) AddCall(call GraphicsContextCall) {

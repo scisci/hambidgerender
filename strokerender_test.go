@@ -5,47 +5,22 @@ import (
 	"testing"
 )
 
-func generateGridTree(levels int) *htree.Tree {
-	ratios := htree.NewRatios([]float64{0.5, 1.0})
-	treeRatios := htree.NewTreeRatios(ratios, 0.0000001)
-
-	tree := htree.NewTree(treeRatios, 1)
-
-	for i := 0; i < levels; i++ {
-		leaves := tree.Leaves()
-		for _, leaf := range leaves {
-			var split htree.Split
-			if i&1 == 0 {
-				split = htree.NewVerticalSplit(0, 0)
-			} else {
-				split = htree.NewHorizontalSplit(1, 1)
-			}
-
-			leaf.Divide(split)
-		}
-	}
-
-	return tree
-}
-
 var strokeTests = []struct {
 	Tree  *htree.Tree
 	Calls []GraphicsContextCall
 }{
 	{
-		Tree: generateGridTree(1),
+		Tree: htree.NewGridTree(1),
 		Calls: []GraphicsContextCall{
 			&GraphicsContextLine{0.5, 0.0, 0.5, 1.0},
-			&GraphicsContextRect{0.0, 0.0, 1.0, 1.0},
 		},
 	},
 	{
-		Tree: generateGridTree(2),
+		Tree: htree.NewGridTree(2),
 		Calls: []GraphicsContextCall{
 			&GraphicsContextLine{0.5, 0.0, 0.5, 1.0},
 			&GraphicsContextLine{0.0, 0.5, 0.5, 0.5},
 			&GraphicsContextLine{0.5, 0.5, 1.0, 0.5},
-			&GraphicsContextRect{0.0, 0.0, 1.0, 1.0},
 		},
 	},
 }

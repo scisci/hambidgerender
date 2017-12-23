@@ -27,7 +27,7 @@ func (renderer *TreeStrokeRenderer) Snap(snap bool) {
 	renderer.snap = snap
 }
 
-func (renderer *TreeStrokeRenderer) Render(tree *htree.Tree, gc GraphicsContext) {
+func (renderer *TreeStrokeRenderer) Render(tree *htree.Tree, gc GraphicsContext) error {
 	it := htree.NewDimensionalIterator(tree.Root(), renderer.offsetX, renderer.offsetY, renderer.scale)
 
 	var container *htree.DimensionalNode
@@ -57,7 +57,5 @@ func (renderer *TreeStrokeRenderer) Render(tree *htree.Tree, gc GraphicsContext)
 		}
 	}
 
-	// Finally draw the rectangle
-	gc.Rect(container.Dimension.Left(), container.Dimension.Top(), container.Width(), container.Height())
-
+	return nil
 }
