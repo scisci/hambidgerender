@@ -6,7 +6,7 @@ import (
 )
 
 func TestLeafFillRenderer(t *testing.T) {
-	tree := htree.NewGridTree(1)
+	tree := htree.NewGridTree2D(1)
 	leaves := tree.Leaves()
 	attributer := htree.NewNodeAttributer()
 	attributer.SetAttribute(leaves[0], LeafFillKey, "#00FF00")

@@ -10,13 +10,13 @@ var strokeTests = []struct {
 	Calls []GraphicsContextCall
 }{
 	{
-		Tree: htree.NewGridTree(1),
+		Tree: htree.NewGridTree2D(1),
 		Calls: []GraphicsContextCall{
 			&GraphicsContextLine{0.5, 0.0, 0.5, 1.0},
 		},
 	},
 	{
-		Tree: htree.NewGridTree(2),
+		Tree: htree.NewGridTree2D(2),
 		Calls: []GraphicsContextCall{
 			&GraphicsContextLine{0.5, 0.0, 0.5, 1.0},
 			&GraphicsContextLine{0.0, 0.5, 0.5, 0.5},

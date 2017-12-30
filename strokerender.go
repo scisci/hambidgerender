@@ -28,7 +28,7 @@ func (renderer *TreeStrokeRenderer) Snap(snap bool) {
 }
 
 func (renderer *TreeStrokeRenderer) Render(tree *htree.Tree, gc GraphicsContext) error {
-	it := htree.NewDimensionalIterator(tree.Root(), renderer.offsetX, renderer.offsetY, renderer.scale)
+	it := htree.NewDimensionalIterator(tree, htree.NewVector(renderer.offsetX, renderer.offsetY, 0), renderer.scale)
 
 	var container *htree.DimensionalNode
 
@@ -40,15 +40,17 @@ func (renderer *TreeStrokeRenderer) Render(tree *htree.Tree, gc GraphicsContext)
 		}
 		// Draw the stroke
 		if !node.IsLeaf() {
+			nodeRatio := tree.Ratio(tree.RatioIndex(node.Node, htree.RatioPlaneXY))
+			nodeLeftRatio := tree.Ratio(tree.RatioIndex(node.Node.Left(), htree.RatioPlaneXY))
 			if node.Split().IsHorizontal() {
-				y := node.Dimension.Top() + node.Dimension.Height()*node.Ratio()/node.Node.Left().Ratio()
+				y := node.Dimension.Top() + node.Dimension.Height()*nodeRatio/nodeLeftRatio
 				if renderer.snap {
 					y = math.Floor(y + 0.5)
 				}
 
 				gc.Line(node.Dimension.Left(), y, node.Dimension.Right(), y)
 			} else {
-				x := node.Dimension.Left() + node.Dimension.Width()*node.Node.Left().Ratio()/node.Ratio()
+				x := node.Dimension.Left() + node.Dimension.Width()*nodeLeftRatio/nodeRatio
 				if renderer.snap {
 					x = math.Floor(x + 0.5)
 				}

@@ -32,7 +32,7 @@ func (renderer *LeafFillRenderer) Snap(snap bool) {
 func (renderer *LeafFillRenderer) Render(tree *htree.Tree, gc GraphicsContext) error {
 	leaves := tree.Leaves()
 
-	nodeDimMap := htree.NewNodeDimensionMap(tree.Root(), renderer.offsetX, renderer.offsetY, renderer.scale)
+	nodeDimMap := htree.NewNodeDimensionMap(tree, htree.NewVector(renderer.offsetX, renderer.offsetY, 0), renderer.scale)
 
 	for _, leaf := range leaves {
 		fill, err := renderer.attrs.Attribute(leaf, LeafFillKey)
