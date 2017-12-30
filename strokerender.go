@@ -41,7 +41,7 @@ func (renderer *TreeStrokeRenderer) Render(tree *htree.Tree, gc GraphicsContext)
 		// Draw the stroke
 		if !node.IsLeaf() {
 			nodeRatio := tree.Ratio(tree.RatioIndex(node.Node, htree.RatioPlaneXY))
-			nodeLeftRatio := tree.Ratio(tree.RatioIndex(node.Node.Left(), htree.RatioPlaneXY))
+			nodeLeftRatio := node.Node.Left().Ratio()
 			if node.Split().IsHorizontal() {
 				y := node.Dimension.Top() + node.Dimension.Height()*nodeRatio/nodeLeftRatio
 				if renderer.snap {
