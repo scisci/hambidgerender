@@ -43,14 +43,14 @@ func (renderer *TreeStrokeRenderer) Render(tree *htree.Tree, gc GraphicsContext)
 			nodeRatio := tree.Ratio(tree.RatioIndex(node.Node, htree.RatioPlaneXY))
 			nodeLeftRatio := node.Node.Left().Ratio()
 			if node.Split().IsHorizontal() {
-				y := node.Dimension.Top() + node.Dimension.Height()*nodeRatio/nodeLeftRatio
+				y := node.Dimension.Top() + node.Dimension.Height()*htree.RatioNormalHeight(nodeRatio, nodeLeftRatio)
 				if renderer.snap {
 					y = math.Floor(y + 0.5)
 				}
 
 				gc.Line(node.Dimension.Left(), y, node.Dimension.Right(), y)
 			} else {
-				x := node.Dimension.Left() + node.Dimension.Width()*nodeLeftRatio/nodeRatio
+				x := node.Dimension.Left() + node.Dimension.Width()*htree.RatioNormalWidth(nodeRatio, nodeLeftRatio)
 				if renderer.snap {
 					x = math.Floor(x + 0.5)
 				}
