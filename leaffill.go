@@ -35,14 +35,14 @@ func (renderer *LeafFillRenderer) Render(tree *htree.Tree, gc GraphicsContext) e
 	nodeDimMap := htree.NewNodeDimensionMap(tree, htree.NewVector(renderer.offsetX, renderer.offsetY, 0), renderer.scale)
 
 	for _, leaf := range leaves {
-		fill, err := renderer.attrs.Attribute(leaf, LeafFillKey)
+		fill, err := renderer.attrs.Attribute(leaf.ID(), LeafFillKey)
 		if err != nil {
 			fill = LeafFillDefaultFill
 		}
 
 		gc.Fill(fill)
 
-		dim, err := nodeDimMap.Dimension(leaf)
+		dim, err := nodeDimMap.Dimension(leaf.ID())
 		if err != nil {
 			return err
 		}
