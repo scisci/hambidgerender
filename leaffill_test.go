@@ -2,13 +2,15 @@ package hambidgerender
 
 import (
 	htree "github.com/scisci/hambidgetree"
+	"github.com/scisci/hambidgetree/attributors"
+	"github.com/scisci/hambidgetree/generators/grid"
 	"testing"
 )
 
 func TestLeafFillRenderer(t *testing.T) {
-	tree := htree.NewGridTree2D(1)
-	leaves := tree.Leaves()
-	attributer := htree.NewNodeAttributer()
+	tree := grid.New2D(1)
+	leaves := htree.FindLeaves(tree)
+	attributer := attributors.NewNodeAttributer()
 	attributer.SetAttribute(leaves[0].ID(), LeafFillKey, "#00FF00")
 	attributer.SetAttribute(leaves[1].ID(), LeafFillKey, "#0000FF")
 	renderer := NewLeafFillRenderer(0, 0, 1, attributer)

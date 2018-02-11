@@ -2,6 +2,7 @@ package hambidgerender
 
 import (
 	htree "github.com/scisci/hambidgetree"
+	"github.com/scisci/hambidgetree/attributors"
 )
 
 const LeafFillKey = "fill"
@@ -11,11 +12,11 @@ type LeafFillRenderer struct {
 	offsetX float64
 	offsetY float64
 	scale   float64
-	attrs   htree.NodeAttributes
+	attrs   attributors.NodeAttributes
 	snap    bool
 }
 
-func NewLeafFillRenderer(offsetX, offsetY, scale float64, attrs htree.NodeAttributes) *LeafFillRenderer {
+func NewLeafFillRenderer(offsetX, offsetY, scale float64, attrs attributors.NodeAttributes) *LeafFillRenderer {
 	return &LeafFillRenderer{
 		offsetX: offsetX,
 		offsetY: offsetY,
@@ -29,10 +30,10 @@ func (renderer *LeafFillRenderer) Snap(snap bool) {
 	renderer.snap = snap
 }
 
-func (renderer *LeafFillRenderer) Render(tree *htree.Tree, gc GraphicsContext) error {
-	leaves := tree.Leaves()
-
-	nodeDimMap := htree.NewNodeDimensionMap(tree, htree.NewVector(renderer.offsetX, renderer.offsetY, 0), renderer.scale)
+func (renderer *LeafFillRenderer) Render(tree htree.ImmutableTree, gc GraphicsContext) error {
+	leaves := htree.FindLeaves(tree)
+	regionMap := htree.NewNodeRegionMap(tree, htree.NewVector(renderer.offsetX, renderer.offsetY, 0), renderer.scale)
+	//nodeDimMap := htree.NewNodeDimensionMap(tree, htree.NewVector(renderer.offsetX, renderer.offsetY, 0), renderer.scale)
 
 	for _, leaf := range leaves {
 		fill, err := renderer.attrs.Attribute(leaf.ID(), LeafFillKey)
@@ -42,11 +43,7 @@ func (renderer *LeafFillRenderer) Render(tree *htree.Tree, gc GraphicsContext) e
 
 		gc.Fill(fill)
 
-		dim, err := nodeDimMap.Dimension(leaf.ID())
-		if err != nil {
-			return err
-		}
-
+		dim := regionMap.Region(leaf.ID()).Dimension()
 		gc.Rect(dim.Left(), dim.Top(), dim.Width(), dim.Height())
 	}
 

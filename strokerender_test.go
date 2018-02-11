@@ -2,21 +2,22 @@ package hambidgerender
 
 import (
 	htree "github.com/scisci/hambidgetree"
+	"github.com/scisci/hambidgetree/generators/grid"
 	"testing"
 )
 
 var strokeTests = []struct {
-	Tree  *htree.Tree
+	Tree  htree.ImmutableTree
 	Calls []GraphicsContextCall
 }{
 	{
-		Tree: htree.NewGridTree2D(1),
+		Tree: grid.New2D(1),
 		Calls: []GraphicsContextCall{
 			&GraphicsContextLine{0.5, 0.0, 0.5, 1.0},
 		},
 	},
 	{
-		Tree: htree.NewGridTree2D(2),
+		Tree: grid.New2D(2),
 		Calls: []GraphicsContextCall{
 			&GraphicsContextLine{0.5, 0.0, 0.5, 1.0},
 			&GraphicsContextLine{0.0, 0.5, 0.5, 0.5},

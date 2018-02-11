@@ -27,10 +27,12 @@ func (renderer *TreeStrokeRenderer) Snap(snap bool) {
 	renderer.snap = snap
 }
 
-func (renderer *TreeStrokeRenderer) Render(tree *htree.Tree, gc GraphicsContext) error {
-	it := htree.NewDimensionalIterator(tree, htree.NewVector(renderer.offsetX, renderer.offsetY, 0), renderer.scale)
+func (renderer *TreeStrokeRenderer) Render(tree htree.ImmutableTree, gc GraphicsContext) error {
+	it := htree.NewRegionIterator(tree, htree.NewVector(renderer.offsetX, renderer.offsetY, 0), renderer.scale)
 
-	var container *htree.DimensionalNode
+	//it := htree.NewDimensionalIterator(tree, htree.NewVector(renderer.offsetX, renderer.offsetY, 0), renderer.scale)
+
+	var container htree.NodeRegion
 
 	for it.HasNext() {
 		node := it.Next()
@@ -39,22 +41,25 @@ func (renderer *TreeStrokeRenderer) Render(tree *htree.Tree, gc GraphicsContext)
 			container = node
 		}
 		// Draw the stroke
-		if !node.IsLeaf() {
-			nodeRatio := tree.Ratio(tree.RatioIndex(node.Node, htree.RatioPlaneXY))
-			nodeLeftRatio := node.Node.Left().Ratio()
-			if node.Split().IsHorizontal() {
-				y := node.Dimension.Top() + node.Dimension.Height()*htree.RatioNormalHeight(nodeRatio, nodeLeftRatio)
+		branch := node.Node().Branch()
+		if branch != nil {
+			nodeRatio := tree.Ratios().At(node.RatioIndexXY())    // tree.Ratio(tree.RatioIndex(node.Node, htree.RatioPlaneXY))
+			nodeLeftRatio := tree.Ratios().At(branch.LeftIndex()) // node.Node.Left().Ratio()
+			dim := node.Dimension()
+
+			if branch.SplitType() == htree.SplitTypeHorizontal {
+				y := dim.Top() + dim.Height()*htree.RatioNormalHeight(nodeRatio, nodeLeftRatio)
 				if renderer.snap {
 					y = math.Floor(y + 0.5)
 				}
 
-				gc.Line(node.Dimension.Left(), y, node.Dimension.Right(), y)
+				gc.Line(dim.Left(), y, dim.Right(), y)
 			} else {
-				x := node.Dimension.Left() + node.Dimension.Width()*htree.RatioNormalWidth(nodeRatio, nodeLeftRatio)
+				x := dim.Left() + dim.Width()*htree.RatioNormalWidth(nodeRatio, nodeLeftRatio)
 				if renderer.snap {
 					x = math.Floor(x + 0.5)
 				}
-				gc.Line(x, node.Dimension.Top(), x, node.Dimension.Bottom())
+				gc.Line(x, dim.Top(), x, dim.Bottom())
 			}
 		}
 	}
