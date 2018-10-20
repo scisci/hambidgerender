@@ -27,7 +27,7 @@ func (renderer *TreeStrokeRenderer) Snap(snap bool) {
 	renderer.snap = snap
 }
 
-func (renderer *TreeStrokeRenderer) Render(tree htree.ImmutableTree, gc GraphicsContext) error {
+func (renderer *TreeStrokeRenderer) Render(tree htree.Tree, gc GraphicsContext) error {
 	it := htree.NewRegionIterator(tree, htree.NewVector(renderer.offsetX, renderer.offsetY, 0), renderer.scale)
 
 	//it := htree.NewDimensionalIterator(tree, htree.NewVector(renderer.offsetX, renderer.offsetY, 0), renderer.scale)
@@ -42,10 +42,11 @@ func (renderer *TreeStrokeRenderer) Render(tree htree.ImmutableTree, gc Graphics
 		}
 		// Draw the stroke
 		branch := node.Node().Branch()
+		ratios := tree.RatioSource().Ratios()
 		if branch != nil {
-			nodeRatio := tree.Ratios().At(node.RatioIndexXY())    // tree.Ratio(tree.RatioIndex(node.Node, htree.RatioPlaneXY))
-			nodeLeftRatio := tree.Ratios().At(branch.LeftIndex()) // node.Node.Left().Ratio()
-			dim := node.Dimension()
+			nodeRatio := ratios[node.Region().RatioIndexXY()] // tree.Ratio(tree.RatioIndex(node.Node, htree.RatioPlaneXY))
+			nodeLeftRatio := ratios[branch.LeftIndex()]       // node.Node.Left().Ratio()
+			dim := node.Region().Dimension()
 
 			if branch.SplitType() == htree.SplitTypeHorizontal {
 				y := dim.Top() + dim.Height()*htree.RatioNormalHeight(nodeRatio, nodeLeftRatio)

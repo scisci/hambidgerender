@@ -2,6 +2,7 @@ package hambidgerender
 
 import (
 	htree "github.com/scisci/hambidgetree"
+	"github.com/scisci/hambidgetree/algo"
 	"github.com/scisci/hambidgetree/attributors"
 )
 
@@ -30,9 +31,9 @@ func (renderer *LeafFillRenderer) Snap(snap bool) {
 	renderer.snap = snap
 }
 
-func (renderer *LeafFillRenderer) Render(tree htree.ImmutableTree, gc GraphicsContext) error {
-	leaves := htree.FindLeaves(tree)
-	regionMap := htree.NewNodeRegionMap(tree, htree.NewVector(renderer.offsetX, renderer.offsetY, 0), renderer.scale)
+func (renderer *LeafFillRenderer) Render(tree htree.Tree, gc GraphicsContext) error {
+	leaves := algo.FindLeaves(tree)
+	regionMap := htree.NewTreeRegionMap(tree, htree.NewVector(renderer.offsetX, renderer.offsetY, 0), renderer.scale)
 	//nodeDimMap := htree.NewNodeDimensionMap(tree, htree.NewVector(renderer.offsetX, renderer.offsetY, 0), renderer.scale)
 
 	for _, leaf := range leaves {
@@ -43,7 +44,7 @@ func (renderer *LeafFillRenderer) Render(tree htree.ImmutableTree, gc GraphicsCo
 
 		gc.Fill(fill)
 
-		dim := regionMap.Region(leaf.ID()).Dimension()
+		dim := regionMap[leaf.ID()].Dimension()
 		gc.Rect(dim.Left(), dim.Top(), dim.Width(), dim.Height())
 	}
 
